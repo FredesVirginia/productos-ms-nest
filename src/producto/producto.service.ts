@@ -17,7 +17,7 @@ export class ProductoService extends PrismaClient implements OnModuleInit {
       data: createProductoDto
     })
   }
-
+//PARAMETROS POR QUERY PARA LA PAGINACION
   findAll() {
     return this.product.findMany({})
   }
