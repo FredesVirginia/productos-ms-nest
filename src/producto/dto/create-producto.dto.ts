@@ -11,5 +11,5 @@ export class CreateProductoDto {
     })
     @Min(0)
     @Type(()=>Number)
-    public price : string;
+    public price : number;
 }
