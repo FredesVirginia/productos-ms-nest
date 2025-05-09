@@ -1,36 +1,44 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe } from '@nestjs/common';
 import { ProductoService } from './producto.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
 import { PaginationDto } from 'src/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller('producto')
 export class ProductoController {
   constructor(private readonly productoService: ProductoService) {}
 
-  @Post()
-  create(@Body() createProductoDto: CreateProductoDto) {
+  //@Post()
+ @MessagePattern({cmd : 'create_product'})
+  create(@Payload() createProductoDto: CreateProductoDto) {
     return this.productoService.create(createProductoDto);
   }
 
-  @Get()
-  findAll(@Query() paginationDto : PaginationDto) {
+  //@Get()
+  @MessagePattern({cmd : 'get_all_product'})
+  findAll(@Payload() paginationDto : PaginationDto) {
     
     return this.productoService.findAll(paginationDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productoService.findOne(+id);
+  // @Get(':id')
+  @MessagePattern({cmd : 'get_id_product'})
+  findOne(@Payload('id' , ParseIntPipe) id: number) {
+    return this.productoService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductoDto: UpdateProductoDto) {
-    return this.productoService.update(+id, updateProductoDto);
+  // @Patch(':id')
+  @MessagePattern({cmd : 'update_product'})
+  update(@Payload() updateProductoDto : UpdateProductoDto) {
+    //return this.productoService.update(+id, updateProductoDto);
+  
+    return this.productoService.update( updateProductoDto.id , updateProductoDto)
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productoService.remove(+id);
+  // @Delete(':id')
+  @MessagePattern({cmd : 'delete_product'})
+  remove(@Payload('id' , ParseIntPipe) id: number) {
+    return this.productoService.remove(id);
   }
 }
